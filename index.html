@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College KIOSK Home</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Include jsPDF Library -->
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #003366;
+      padding: 15px;
+      color: white;
+      position: relative;
+    }
+
+    .header img {
+      position: absolute;
+      left: 20px;
+      height: 60px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Welcome text */
+    .welcome {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    /* Center input section */
+    .center-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 50vh;
+    }
+
+    .center-box input {
+      width: 300px;
+      padding: 12px;
+      font-size: 18px;
+      border: 2px solid #003366;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    /* Bottom button */
+    .bottom-button {
+      text-align: right;
+      margin-bottom: 40px;
+      margin-right: 20px;
+    }
+
+    .bottom-button button {
+      padding: 12px 30px;
+      font-size: 20px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .bottom-button button:hover {
+      background-color: #0055aa;
+    }
+
+    /* User Details Table */
+    .user-details-table {
+      margin-top: 40px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .user-details-table th,
+    .user-details-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .user-details-table th {
+      background-color: #003366;
+      color: white;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .action-buttons button {
+      margin: 0 10px;
+      padding: 12px 30px;
+      font-size: 18px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .action-buttons button:hover {
+      background-color: #0055aa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header Section -->
+  <div class="header">
+    <img src="logo.png" alt="College Logo">
+    <h1>Govt. Tool Room and Training Centre - Magadi</h1>
+  </div>
+
+  <!-- Welcome Message -->
+  <div class="welcome">
+    Welcome to College Digital Services KIOSK
+  </div>
+
+  <!-- Center Input Section -->
+  <div class="center-box">
+    <input type="text" id="registerNumber" placeholder="Enter Register Number">
+  </div>
+
+  <!-- Bottom Enter Button -->
+  <div class="bottom-button">
+    <button onclick="showUserDetails()">ENTER</button>
+  </div>
+
+  <!-- User Details Section (Initially Hidden) -->
+  <div id="userDetailsSection" style="display: none; text-align: center;">
+    <table class="user-details-table">
+      <tr>
+        <th>Name</th>
+        <th>Course</th>
+        <th>Year</th>
+        <th>Email</th>
+      </tr>
+      <tr>
+        <td id="userName">John Doe</td>
+        <td id="userCourse">B.Tech Mechanical</td>
+        <td id="userYear">3rd Year</td>
+        <td id="userEmail">john.doe@example.com</td>
+      </tr>
+    </table>
+
+    <div class="action-buttons">
+      <button onclick="payFee()">Pay Fee</button>
+      <button onclick="generateDocument()">Generate Document</button>
+    </div>
+  </div>
+
+  <script>
+    // Simulate user data from a JSON file
+    const usersData = [
+      {
+        registerNumber: "123456",
+        name: "John Doe",
+        course: "B.Tech Mechanical",
+        year: "3rd Year",
+        email: "john.doe@example.com"
+      },
+      {
+        registerNumber: "789012",
+        name: "Jane Smith",
+        course: "B.Tech Civil",
+        year: "2nd Year",
+        email: "jane.smith@example.com"
+      },
+      // Add more user data as needed
+    ];
+
+    function showUserDetails() {
+      const registerNumber = document.getElementById("registerNumber").value.trim();
+
+      if (registerNumber === "") {
+        alert("Please enter a valid Register Number");
+        return;
+      }
+
+      // Search for the user by register number
+      const user = usersData.find(u => u.registerNumber === registerNumber);
+
+      if (user) {
+        // Populate user details with the data found
+        document.getElementById("userName").innerText = user.name;
+        document.getElementById("userCourse").innerText = user.course;
+        document.getElementById("userYear").innerText = user.year;
+        document.getElementById("userEmail").innerText = user.email;
+
+        // Display user details section and hide the input box
+        document.getElementById("userDetailsSection").style.display = "block";
+        document.querySelector(".center-box").style.display = "none";
+      } else {
+        alert("Register Number not found.");
+      }
+    }
+
+    function payFee() {
+      alert("Redirecting to Fee Payment page...");
+    }
+
+    function generateDocument() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Get user details from the page
+      const name = document.getElementById("userName").innerText;
+      const course = document.getElementById("userCourse").innerText;
+      const year = document.getElementById("userYear").innerText;
+      const email = document.getElementById("userEmail").innerText;
+
+      // Add title
+      doc.setFontSize(20);
+      doc.text('Study Certificate', 105, 20, { align: 'center' });
+
+      // Add College Name
+      doc.setFontSize(16);
+      doc.text('Govt. Tool Room and Training Centre - Magadi', 105, 30, { align: 'center' });
+
+      // Add student details
+      doc.setFontSize(12);
+      doc.text(`This is to certify that ${name}, enrolled in the course ${course}, ${year} has been a student of this institution.`, 20, 50);
+      doc.text(`Email: ${email}`, 20, 60);
+      
+      // Generate PDF
+      doc.save(`${name}_Study_Certificate.pdf`);
+    }
+  </script>
+
+</body>
+
+</html>
